@@ -2,6 +2,17 @@
 
 #import "@preview/codly:1.3.0": *
 #import "@preview/codly-languages:0.1.1": *
+#show: codly-init.with()
+
+#codly(
+  languages: (
+    rust: (name: "Rust", icon: "🦀", color: rgb("#CE412B")),
+  ),
+)
+
+// 中文字体
+#show emph: text.with(font: ("Libre Baskerville", "FZKai-Z03S"))
+
 
 // 设置文档的基本属性
 #set document(
@@ -21,7 +32,7 @@
       #grid(
         columns: (1fr, 1fr),
         align: (left, right),
-        [飞行动力学控制与仿真实验室 HPC 使用手册], [第 #counter(page).display() 页],
+        [飞行动力学控制与仿真实验室HPC使用手册], [第 #counter(page).display() 页],
       )
       #line(length: 100%, stroke: 0.5pt)
     ]
@@ -32,84 +43,51 @@
       #set align(center)
       #line(length: 100%, stroke: 0.5pt)
       #v(0.5em)
-      [© 2025 飞行动力学控制与仿真实验室. 保留所有权利.]
+      [© 2025 飞行动力学控制与仿真实验室HPC使用手册. 保留所有权利.]
     ]
   },
 )
 
 // 设置文本格式
 #set smartquote(enabled: true)
+#set text(
+  size: 12pt,
+  lang: "zh",
+  region: "cn",
+  font: ("Libre Baskerville", "FZShuSong-Z01S"),
+)
 
 // 设置段落格式
-// ...existing code...
+#set par(first-line-indent: 2em)
+#let indent = h(2em)
 
-// 标题字体
+// 设置标题格式
 #set heading(numbering: "1.1")
 #show heading.where(level: 1): it => {
   pagebreak(weak: true)
   v(2em)
-  set text(size: 18pt, weight: "bold", font: "FZHei-B01S")
+  set text(size: 20pt, weight: "bold", font: "FZHei-B01S")
   set align(center)
   it
   v(1em)
 }
 #show heading.where(level: 2): it => {
   v(1.5em)
-  set text(size: 14pt, weight: "bold", font: "FZHei-B01S")
+  set text(size: 16pt, weight: "bold", font: "FZHei-B01S")
   it
   v(0.5em)
 }
 #show heading.where(level: 3): it => {
   v(1em)
-  set text(size: 12pt, weight: "bold", font: "FZHei-B01S")
+  set text(size: 14pt, weight: "bold", font: "FZHei-B01S")
   it
   v(0.3em)
 }
-
-// 正文
-#set text(
-  size: 11pt,
-  lang: "zh",
-  region: "cn",
-  font: ("Garamond", "FZKai-Z03S"),
-)
-
-
-// 行内代码字体
-// #show raw.where(block: false): box.with(
-//   font: "Maple Mono",
-//   size: 10pt,
-//   fill: luma(240),
-//   inset: (x: 3pt, y: 0pt),
-//   outset: (y: 3pt),
-//   radius: 2pt,
-// )
-
-// callout块字体和样式（以info为例，可自定义更多类型）
-#let callout = (type: "info", body) => box.with(
-  fill: if type == "info" { rgb("#e3f2fd") } else if type == "warn" { rgb("#fff3cd") } else { luma(240) },
-  stroke: if type == "info" { rgb("#2196f3") } else if type == "warn" { rgb("#ff9800") } else { luma(180) },
-  radius: 4pt,
-  inset: 8pt,
-  text: set text(font: "Noto Serif SC", size: 11pt, style: "italic"),
-)[
-  body
-]
-
-// 用法示例：#callout(type: "info", body: [这是一个信息提示块])
-// ...existing code...
 
 // 设置链接样式
 #show link: set text(fill: blue)
 
 // 设置代码块样式
-// #show raw.where(block: true): block.with(
-//   fill: luma(240),
-//   inset: 10pt,
-//   radius: 4pt,
-//   width: 100%,
-// )
-
 #show raw.where(block: false): box.with(
   fill: luma(240),
   inset: (x: 3pt, y: 0pt),
@@ -117,13 +95,6 @@
   radius: 2pt,
 )
 
-#show: codly-init.with()
-
-#codly(
-  languages: (
-    rust: (name: "Rust", icon: "🦀", color: rgb("#CE412B")),
-  ),
-)
 
 // ========================================
 // 封面页
@@ -133,19 +104,19 @@
 #align(center)[
   #v(3cm)
 
-  #text(size: 28pt, weight: "bold", font: "FZHei-B01S")[
+  #text(size: 32pt, weight: "bold", font: "FZHei-B01S")[
     飞行器动力学控制与仿真实验室高性能计算平台
   ]
 
   #v(1cm)
 
-  #text(size: 24pt, weight: "bold")[
+  #text(size: 28pt, weight: "bold")[
     使用手册
   ]
 
   #v(1cm)
 
-  #text(size: 16pt)[
+  #text(size: 22pt)[
     HPC Manual
   ]
 
@@ -156,21 +127,19 @@
 
   #v(2cm)
 
-  #text(size: 14pt)[
+  #text(size: 18pt)[
     汪宇航 编写
   ]
 
   #v(1cm)
 
-  #text(size: 12pt)[
+  #text(size: 16pt)[
     #datetime.today().display("[year]年[month]月[day]日")
   ]
 
   #v(1cm)
 
-  #text(size: 10pt, style: "italic")[
-    版本 1.0
-  ]
+  #text(size: 14pt)[_版本 1.0_]
 ]
 
 #pagebreak()
@@ -181,7 +150,7 @@
 #set page(header: none, footer: none)
 
 #align(center)[
-  #text(size: 20pt, weight: "bold", font: "FZHei-B01S")[目录]
+  #text(size: 24pt, font: "FZHei-B01S")[目录]
 ]
 
 #v(1cm)
@@ -212,7 +181,7 @@
     set align(center)
     line(length: 100%, stroke: 0.5pt)
     v(0.5em)
-    [© 2025 实验室. 保留所有权利.]
+    [© 2025 飞行动力学控制与仿真实验室. 保留所有权利.]
   },
 )
 
@@ -228,14 +197,23 @@
 
 为了帮助您快速、高效地利用我们强大的计算资源，请仔细阅读本手册。本平台旨在为您提供稳定、公平的计算环境，以加速您的科研进程。
 
+== 核心设计原则
+
+- *稳定压倒一切*: 生产力工具的基石；
+- *物尽其用*：在资源受限的情况下，最大化硬件效能；
+- *职责分离*: 容器化设计；
+- *安全第一*: 最小化权限，默认拒绝，层层加固；
+- *环境一致性与可复现性*：软件环境中心化，计算结果可复现；
+- *用户体验*: 在管控与灵活之间寻求最佳平衡。
+
 == 使用须知
 
 在开始使用之前，请注意以下几点：
 
-- 请遵守实验室的使用规范
-- 合理使用计算资源，避免浪费
-- 定期备份重要数据
-- 如遇问题，请及时联系管理员
+- 请遵守实验室的使用规范；
+- 合理使用计算资源，避免浪费；
+- 定期备份重要数据；
+- 如遇问题，请及时联系管理员。
 
 = 快速开始
 
