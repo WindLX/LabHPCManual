@@ -6,13 +6,15 @@
 
 #codly(
   languages: (
+    python: (name: "Python", icon: "🐍", color: rgb("#3572A5")),
+    bash: (name: "Bash", icon: "🐚", color: rgb("#129a42")),
     rust: (name: "Rust", icon: "🦀", color: rgb("#CE412B")),
   ),
 )
 
 // 中文字体
+#show strong: text.with(font: ("Libre Baskerville", "FZHei-B01S"))
 #show emph: text.with(font: ("Libre Baskerville", "FZKai-Z03S"))
-
 
 // 设置文档的基本属性
 #set document(
@@ -215,61 +217,156 @@
 - 定期备份重要数据；
 - 如遇问题，请及时联系管理员。
 
-= 快速开始
+
+== 版本历史
+
+
+// ========================================
+// 部分页
+// ========================================
+#set page(header: none, footer: none)
+
+#align(center)[
+  #v(8cm)
+
+  #text(size: 32pt, weight: "bold", font: "FZHei-B01S")[
+    第一部分：架构总览
+  ]
+]
+
+= 平台拓扑与硬件清单
 
 本章将帮助您快速连接到服务器并开始使用。
 
 == 系统架构
 
-我们的计算平台由两台核心服务器组成：
 
-- `ipc` (IP: `192.168.5.45:4000`): *登录节点*，集群的唯一入口
-- `rs1` (IP: `192.168.5.36`): *计算节点*，负责运行计算任务
-
-== 连接工具
-
-我们强烈推荐使用 *VS Code* 及其 *Remote - SSH* 扩展作为您与服务器交互的工具。
-
-= 环境配置
-
-本章介绍如何配置您的工作环境。
-
-== 基本环境设置
-
-详细的环境配置步骤...
-
-```bash
-passwd
-```
+== 硬件规格详单
 
 
-== 软件安装
+== 软件栈概览 (OS, Slurm, NVIDIA, Docker, ... )
 
-如何安装所需的软件包...
 
-= 作业管理
+== 外部服务集成
 
-本章介绍如何提交和管理计算作业。
 
-== Slurm作业调度系统
+=== EasyTier VPN: 实现安全的远程访问。
 
-Slurm的基本使用方法...
 
-== 作业提交
+=== 独立NAS系统: 作为团队共享的数据仓库。
 
-如何编写和提交作业脚本...
 
-= 常见问题
 
-本章收录了用户常遇到的问题及解决方案。
+// ========================================
+// 部分页
+// ========================================
+#set page(header: none, footer: none)
 
-== 连接问题
+#align(center)[
+  #v(8cm)
 
-网络连接相关的问题...
+  #text(size: 32pt, weight: "bold", font: "FZHei-B01S")[
+    第二部分：从零到集群——平台搭建实录 (管理员篇)
+  ]
+]
 
-== 性能优化
 
-如何优化您的计算任务...
+= 操作系统安装与基础加固
+
+== Debian 13 "Trixie" 最小化服务器安装
+
+=== 关键分区方案 (`/home`, `/var`, `/tmp`分离)
+
+*   2.2 基础系统配置
+    *   2.2.1 APT镜像源配置 (`main`, `non-free`)
+    *   2.2.2 核心工具集与防火墙(UFW)配置
+    *   2.2.3 **(修订)** 安全模型：`su`代替`sudo`
+    *   2.2.4 中文与国际化支持 (Locale)
+*   2.3 SSH服务安全加固 (`/etc/ssh/sshd_config`)
+    *   2.3.1 禁用密码与root登录，强制使用SSH密钥。
+
+*   **第三章：核心计算环境部署**
+    *   3.1 NVIDIA GPU环境部署
+        *   3.1.1 诊断与决策：从`backports`到`.run`安装包
+        *   3.1.2 使用`.run`文件与DKMS及开源内核模块进行安装
+        *   3.1.3 `nvidia-persistenced`服务的手动配置
+        *   3.1.4 CUDA Toolkit与cuDNN的安装
+    *   3.2 Slurm一体化部署
+        *   3.2.1 Munge认证配置
+        *   3.2.2 数据库(MariaDB)与`slurmdbd`记账配置
+        *   3.2.3 `slurm.conf`最终版详解 (单节点，多角色)
+        *   3.2.4 `gres.conf`与`cgroup.conf`的精确配置
+        *   3.2.5 QOS与分区的精细化权限管理
+
+*   **第四章：用户环境与软件栈**
+    *   4.1 全局共享软件的安装 (`/opt`)
+        *   4.1.1 Docker, Redis (通过`apt`)
+        *   4.1.2 Rust, Node.js, Miniforge, uv (手动安装至`/opt`)
+    *   4.2 全局环境变量配置 (`/etc/profile.d`)
+    *   4.3 软件镜像源的统一配置
+    *   4.4 预装科学计算库与命令行工具集
+
+*   **第五章：用户会话的资源限制 (原生安全核心)**
+    *   5.1 **PAM与cgroups v2的协同工作原理**
+    *   5.2 **使用`systemd` Slice单元定义资源模板** (`/etc/systemd/system/user-.slice.d/`)
+        *   5.2.1 限制CPU (`CPUQuota`, `CPUWeight`)
+        *   5.2.2 限制内存 (`MemoryMax`)
+        *   5.2.3 **【核心】通过设备白名单禁止GPU访问 (`DevicePolicy`, `DeviceAllow`)**
+    *   5.3 (新增) **通过`/etc/fstab`限制进程可见性**
+        *   5.3.1 `hidepid`挂载选项的原理与应用
+        *   5.3.2 配置`/proc`的挂载，增强用户隔离
+    *   5.4 (新增) **通过文件权限避免安全问题**
+        *   5.4.1 锁定`/opt`共享软件目录为只读
+        *   5.4.2 其他关键目录的权限策略
+
+
+
+// ========================================
+// 部分页
+// ========================================
+#set page(header: none, footer: none)
+
+#align(center)[
+  #v(8cm)
+
+  #text(size: 32pt, weight: "bold", font: "FZHei-B01S")[
+    第三部分：集群的日常——运维管理实战 (管理员篇)
+  ]
+]
+
+
+
+// ========================================
+// 部分页
+// ========================================
+#set page(header: none, footer: none)
+
+#align(center)[
+  #v(8cm)
+
+  #text(size: 32pt, weight: "bold", font: "FZHei-B01S")[
+    第四部分：开始计算！——科研平台使用指南 (用户篇)
+  ]
+]
+
+
+---
+
+// ========================================
+// 部分页
+// ========================================
+#set page(header: none, footer: none)
+
+#align(center)[
+  #v(8cm)
+
+  #text(size: 32pt, weight: "bold", font: "FZHei-B01S")[
+    第五部分：NAS数据中心使用指南
+  ]
+]
+
+
+
 
 = 附录
 
